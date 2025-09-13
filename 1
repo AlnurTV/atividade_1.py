@@ -1,0 +1,48 @@
+
+import random
+from graphviz import Digraph
+
+class Node:
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+def build_fixed_tree():
+    left = Node("+", Node("7"), Node("3"))
+    right = Node("-", Node("5"), Node("2"))
+    root = Node("*", left, right)
+    return root
+
+def build_random_tree():
+    operators = ["+", "-", "*", "/"]
+    operands = [str(random.randint(1, 9)) for _ in range(5)]
+
+    left = Node(random.choice(operators), Node(operands[0]), Node(operands[1]))
+    right = Node(random.choice(operators), Node(operands[2]), Node(operands[3]))
+    root = Node(random.choice(operators), left, right)
+    
+    return root
+
+def visualize_tree(root, filename="tree"):
+    dot = Digraph()
+    
+    def add_nodes_edges(node, parent=None):
+        if node:
+            dot.node(str(id(node)), node.value)
+            if parent:
+                dot.edge(str(id(parent)), str(id(node)))
+            add_nodes_edges(node.left, node)
+            add_nodes_edges(node.right, node)
+    
+    add_nodes_edges(root)
+    dot.render(filename, format="png", cleanup=True) 
+    print(f"Árvore gerada: {filename}.png")
+
+if __name__ == "__main__":
+    
+    fixed_tree = build_fixed_tree()
+    visualize_tree(fixed_tree, "arvore_fixa")
+
+    random_tree = build_random_tree()
+    visualize_tree(random_tree, "arvore_randomica")
